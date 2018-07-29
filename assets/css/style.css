@@ -10,6 +10,9 @@ body{
     background: black;
     color: white;
 }
+.category{
+    margin:3px;
+}
 .resetBtn{
     margin-left: auto;
     display: block;
