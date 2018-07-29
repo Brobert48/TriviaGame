@@ -1,6 +1,4 @@
 var game = {
-    question: "",
-    correct_answer: "",
     choices: [],
     correct: 0,
     incorrect: 0,
@@ -52,7 +50,7 @@ var game = {
         $('#question').removeAttr('data-answer');
         $('.multiChoice').remove();
         console.log('correct');
-        $('#question').html('<h1> CORRECT!!!! </h1>');
+        $('#question').html('<h1 class="correct"> CORRECT!!!! </h1>');
         setTimeout(game.nextQuestion, 1000 * 5);
         this.correct++;
         this.asked++;
@@ -64,7 +62,7 @@ var game = {
         $('#question').removeAttr('data-answer');
         $('.multiChoice').remove();
         $('.remove').empty();
-        $('#question').html('<h1> Nope!!!! </h1>');
+        $('#question').html('<h1 class="wrong"> Nope!!!! </h1>');
         $('#choices').html('<h3 class="remove"> The correct answer was: ' + str + '</h3>');
         setTimeout(game.nextQuestion, 1000 * 5);
         this.incorrect++;
@@ -98,7 +96,7 @@ var game = {
         $('#question').removeAttr('data-answer');
         $('.remove').empty();
         $('.multiChoice').remove();
-        $('#question').html('<h1> Out of Time </h1>');
+        $('#question').html('<h1 class="wrong"> Out of Time </h1>');
         $('#choices').html('<h3 class="remove"> The correct answer was: ' + str + '</h3>');
         this.incorrect++;
         this.asked++;
@@ -108,14 +106,14 @@ var game = {
         $('#question').empty();
         $('.multiChoice').remove();
         $('.remove').empty();
-        $('#question').text(game.question);
+        $('#question').html(game.question);
         $('#question').attr('data-answer', game.correct_answer);
         game.shuffleChoices(game.choices);
         for (var i = 0; i < game.choices.length; i++) {
             newQdiv = $('<div>');
             newQdiv.attr("class", "multiChoice");
             newQdiv.attr("data-value", game.choices[i]);
-            newQdiv.text(game.choices[i]);
+            newQdiv.html(game.choices[i]);
             $('#choices').append(newQdiv);
         }
         game.choices = [];
@@ -127,11 +125,12 @@ var game = {
         if(game.asked>9){
          $('#question').empty();
         $('#timer').empty();
+        $('.remove').empty()
         $('#question').removeAttr('data-answer');
         $('.multiChoice').remove();
         $('#timer').text('Game Over');
-        $('#question').text('Correct: ' + game.correct);
-        $('#choices').text('Incorrect: ' + game.incorrect);
+        $('#question').append('Correct: ' + game.correct + '<br>');
+        $('#question').append('Incorrect: ' + game.incorrect);
         }
         else{
             game.start();

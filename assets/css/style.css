@@ -1,0 +1,54 @@
+body{
+    background-color: black;
+    height: 100%;
+    width: 100%;
+}
+#title{
+    text-align: center;
+}
+#board{
+    background-color: white;
+    width: auto;
+    position: absolute;
+    left:5%;
+    right: 5%;
+    top:10%;
+    bottom: 10%;
+}
+#question{
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin: 5px 10px;
+}
+#timer{
+    text-align: center;
+    height: 20px;
+}
+.correct{
+color: green;
+}
+.wrong{
+color: red;
+}
+.remove{
+    text-align: center;
+}
+#choices{
+height: 200px;
+width: 66%;
+margin-left: 17%;
+}
+
+.multiChoice{
+    padding: 5px 10px;
+    border:blue solid 3px;
+    text-align: center;
+    background: lightblue;
+}
+.multiChoice:hover{
+    border: lightblue dashed 3px;
+    background: blue;
+    color: white;
+
+}
