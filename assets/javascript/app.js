@@ -2,13 +2,25 @@ var game = {
     choices: [],
     correct: 0,
     incorrect: 0,
-    asked:0,
-    timeLeft:-1,
-    difficulty: "easy",
+    asked: 0,
+    timeLeft: -1,
+    difficulty: "",
+    diffChoices:["easy","medium","hard"],
+    // generates the 3 difficulty buttons that start the game.
+    difficultyQuery:function(){
+        for(var i=0;i<this.diffChoices.length; i++){
+        var newBtn = $('<button>');
+        newBtn.attr('data-value', this.diffChoices[i]);
+        newBtn.attr('class', 'difButton');
+        newBtn.text(this.diffChoices[i].toLocaleUpperCase());
+        $('#question').append(newBtn);
+        }
+    },
     start: function () {
         this.populateArrays();
 
     },
+    // this function takes the answer choices and shuffles them within the array.
     shuffleChoices: function (array) {
         var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -22,13 +34,13 @@ var game = {
 
         return array;
     },
-
+    // this function calls the opentdb API and transposes the API response to where I need them.
     populateArrays: function () {
         this.question = "";
         this.correct_answer = "";
         this.choices = [];
         $.ajax({
-            url: "https://opentdb.com/api.php?amount=1&category=23&difficulty="+ this.difficulty +"&type=multiple",
+            url: "https://opentdb.com/api.php?amount=1&category=23&difficulty=" + this.difficulty + "&type=multiple",
             method: "GET"
         }).then(function (response) {
             var question = response.results[0].question;
@@ -39,27 +51,25 @@ var game = {
             }
             game.choices.push(game.correct_answer);
         });
+        // saftey timer to allow for slow API call
         setTimeout(game.populateBoard, 2000);
 
 
 
 
     },
+    // Changes display and starts timer till next question when answer is correct. 
     correctAnswer: function () {
-        $('#question').empty();
-        $('#question').removeAttr('data-answer');
-        $('.multiChoice').remove();
+        this.cleanBoard();
         $('#question').html('<h1 class="correct"> CORRECT!!!! </h1>');
         setTimeout(game.nextQuestion, 1000 * 1);
         this.correct++;
         this.asked++;
         this.timeLeft = -1;
     },
+    // Changes display and starts timer till next question when answer is wrong. 
     wrongAnswer: function (str) {
-        $('#question').empty();
-        $('#question').removeAttr('data-answer');
-        $('.multiChoice').remove();
-        $('.remove').empty();
+        this.cleanBoard();
         $('#question').html('<h1 class="wrong"> Nope!!!! </h1>');
         $('#choices').html('<h3 class="remove"> The correct answer was: ' + str + '</h3>');
         setTimeout(game.nextQuestion, 1000 * 1);
@@ -73,14 +83,14 @@ var game = {
         var timerId = setInterval(countdown, 1000);
 
         function countdown() {
-            if (game.timeLeft === -1){
+            if (game.timeLeft === -1) {
                 clearTimeout(timerId);
                 $('#timer').empty();
             }
             else if (game.timeLeft === 0) {
                 clearTimeout(timerId);
                 game.outOFtime($('#question').attr('data-answer'));
-            } 
+            }
             else {
                 $('#timer').html('You have ' + game.timeLeft + 's left.');
                 game.timeLeft--;
@@ -88,11 +98,7 @@ var game = {
         }
     },
     outOFtime: function (str) {
-        $('#question').empty();
-        $('#timer').empty();
-        $('#question').removeAttr('data-answer');
-        $('.remove').empty();
-        $('.multiChoice').remove();
+        this.cleanBoard();
         $('#question').html('<h1 class="wrong"> Out of Time </h1>');
         $('#choices').html('<h3 class="remove"> The correct answer was: ' + str + '</h3>');
         this.incorrect++;
@@ -107,7 +113,7 @@ var game = {
         $('#question').attr('data-answer', game.correct_answer);
         game.shuffleChoices(game.choices);
         for (var i = 0; i < game.choices.length; i++) {
-            newQdiv = $('<div>');
+            var newQdiv = $('<div>');
             newQdiv.attr("class", "multiChoice");
             newQdiv.attr("data-value", game.choices[i]);
             newQdiv.html(game.choices[i]);
@@ -119,30 +125,57 @@ var game = {
 
     },
     nextQuestion: function () {
-        if(game.asked>9){
-         $('#question').empty();
-        $('#timer').empty();
-        $('.remove').empty()
-        $('#question').removeAttr('data-answer');
-        $('.multiChoice').remove();
-        $('#timer').text('Game Over');
-        $('#question').append('Correct: ' + game.correct + '<br>');
-        $('#question').append('Incorrect: ' + game.incorrect);
+        if (game.asked > 1) {
+            game.cleanBoard();
+            $('#timer').text('Game Over');
+            $('#question').append('Correct: ' + game.correct + '<br>');
+            $('#question').append('Incorrect: ' + game.incorrect);
+            var resetBtn = $('<button>');
+            resetBtn.attr('onclick',"game.reset()");
+            resetBtn.attr('class', 'resetBtn');
+            resetBtn.text(' Play Again ');
+            $('#choices').append(resetBtn);
         }
-        else{
+        else {
             game.start();
         }
     },
+    cleanBoard: function(){
+        $('#question').empty();
+        $('#timer').empty();
+        $('.remove').empty();
+        $('#question').removeAttr('data-answer');
+        $('.multiChoice').remove();
+
+    },
 
     reset: function () {
+        this.cleanBoard();
+        $('.resetBtn').remove();
+        this.difficultyQuery();
+        this.choices = [];
+        this.correct= 0;
+        this.incorrect= 0;
+        this.asked= 0;
+        this.timeLeft= -1;
+        this.difficulty= "";
 
     },
 
 }
-game.start();
+// call function to get the ball rolling.
+game.difficultyQuery();
 
 
 
+
+// event listener for which difficulty the user selects
+$('#question').on('click', '.difButton', function () {
+    this.difficulty = $(this).attr('data-value');
+    game.start();
+});
+
+// event listener to determine if the clicked on the answer Div.
 $('#choices').on('click', '.multiChoice', function () {
     if ($(this).attr('data-value') === $('#question').attr('data-answer')) {
         game.correctAnswer();
