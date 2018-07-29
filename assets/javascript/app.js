@@ -125,7 +125,7 @@ var game = {
 
     },
     nextQuestion: function () {
-        if (game.asked > 1) {
+        if (game.asked > 9) {
             game.cleanBoard();
             $('#timer').text('Game Over');
             $('#question').append('Correct: ' + game.correct + '<br>');

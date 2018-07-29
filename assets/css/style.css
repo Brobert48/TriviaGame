@@ -3,6 +3,18 @@ body{
     height: 100%;
     width: 100%;
 }
+.difButton{
+    margin: 3px;
+}
+.difButton:hover{
+    background: black;
+    color: white;
+}
+.resetBtn{
+    margin-left: auto;
+    display: block;
+    margin-right: auto;
+}
 #title{
     text-align: center;
 }
