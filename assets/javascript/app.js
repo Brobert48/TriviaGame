@@ -1,40 +1,44 @@
 var game = {
-    choices: [],
-    correct: 0,
-    incorrect: 0,
-    asked: 0,
-    timeLeft: -1,
-    difficulty: "",
-    diffChoices:["easy","medium","hard"],
-    catId:"",
-    categoryQuery:function(){
+    generateVars: function () {
+        this.choices = [];
+        this.correct = 0;
+        this.incorrect = 0;
+        this.asked = 0;
+        this.timeLeft = -1;
+        this.difficulty = "";
+        this.diffChoices = ["easy", "medium", "hard"];
+        this.catId = "",
+            this.clickable = true;
+    },
+    categoryQuery: function () {
+        this.generateVars();
         var selDiv = $('<Div>');
-        selDiv.attr('class','catSel');
+        selDiv.attr('class', 'catSel');
         $('#timer').append(selDiv);
         $.ajax({
             url: "https://opentdb.com/api_category.php",
             method: "GET"
         }).then(function (response) {
-            for(var c=0; c<response.trivia_categories.length;c++){
+            for (var c = 0; c < response.trivia_categories.length; c++) {
                 var newCat = $('<button>');
                 newCat.attr('data-id', response.trivia_categories[c].id)
-                .attr('class','category')
-                .text(response.trivia_categories[c].name)
+                    .attr('class', 'category')
+                    .text(response.trivia_categories[c].name)
                 $('.catSel').append(newCat);
             }
         })
 
     },
-    
+
     // generates the 3 difficulty buttons that start the game.
-    difficultyQuery:function(){
+    difficultyQuery: function () {
         this.cleanBoard();
-        for(var i=0; i<this.diffChoices.length; i++){
-        var newBtn = $('<button>');
-        newBtn.attr('data-value', this.diffChoices[i]);
-        newBtn.attr('class', 'difButton');
-        newBtn.text(this.diffChoices[i].toLocaleUpperCase());
-        $('#question').append(newBtn);
+        for (var i = 0; i < this.diffChoices.length; i++) {
+            var newBtn = $('<button>');
+            newBtn.attr('data-value', this.diffChoices[i]);
+            newBtn.attr('class', 'difButton');
+            newBtn.text(this.diffChoices[i].toLocaleUpperCase());
+            $('#question').append(newBtn);
         }
     },
     start: function () {
@@ -61,7 +65,7 @@ var game = {
         this.correct_answer = "";
         this.choices = [];
         $.ajax({
-            url: "https://opentdb.com/api.php?amount=1&category="+ this.catId +"&difficulty=" + this.difficulty + "&type=multiple",
+            url: "https://opentdb.com/api.php?amount=1&category=" + this.catId + "&difficulty=" + this.difficulty + "&type=multiple",
             method: "GET"
         }).then(function (response) {
             var question = response.results[0].question;
@@ -73,7 +77,8 @@ var game = {
             game.choices.push(game.correct_answer);
         });
         // saftey timer to allow for slow API call
-        setTimeout(game.populateBoard, 2000);
+        setTimeout(game.populateBoard, 1000);
+
 
 
 
@@ -152,7 +157,7 @@ var game = {
             $('#question').append('Correct: ' + game.correct + '<br>');
             $('#question').append('Incorrect: ' + game.incorrect);
             var resetBtn = $('<button>');
-            resetBtn.attr('onclick',"game.reset()");
+            resetBtn.attr('onclick', "game.reset()");
             resetBtn.attr('class', 'resetBtn');
             resetBtn.text(' Play Again ');
             $('#choices').append(resetBtn);
@@ -161,7 +166,7 @@ var game = {
             game.start();
         }
     },
-    cleanBoard: function(){
+    cleanBoard: function () {
         $('#question').empty();
         $('#timer').empty();
         $('.remove').empty();
@@ -174,12 +179,6 @@ var game = {
         this.cleanBoard();
         $('.resetBtn').remove();
         this.categoryQuery();
-        this.choices = [];
-        this.correct= 0;
-        this.incorrect= 0;
-        this.asked= 0;
-        this.timeLeft= -1;
-        this.difficulty= "";
 
     },
 
@@ -195,8 +194,11 @@ $('#timer').on('click', '.category', function () {
 
 // event listener for which difficulty the user selects
 $('#question').on('click', '.difButton', function () {
-    game.difficulty = $(this).attr('data-value');
-    game.start();
+    if (game.clickable === true) {
+        game.difficulty = $(this).attr('data-value');
+        game.clickable = false;
+        game.start();
+    }
 });
 
 // event listener to determine if the clicked on the answer Div.
