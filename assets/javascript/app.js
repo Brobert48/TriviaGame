@@ -51,7 +51,7 @@ var game = {
         $('.multiChoice').remove();
         console.log('correct');
         $('#question').html('<h1 class="correct"> CORRECT!!!! </h1>');
-        setTimeout(game.nextQuestion, 1000 * 5);
+        setTimeout(game.nextQuestion, 1000 * 1);
         this.correct++;
         this.asked++;
         this.timeLeft = -1;
@@ -64,7 +64,7 @@ var game = {
         $('.remove').empty();
         $('#question').html('<h1 class="wrong"> Nope!!!! </h1>');
         $('#choices').html('<h3 class="remove"> The correct answer was: ' + str + '</h3>');
-        setTimeout(game.nextQuestion, 1000 * 5);
+        setTimeout(game.nextQuestion, 1000 * 1);
         this.incorrect++;
         this.asked++;
         this.timeLeft = -1;
@@ -100,7 +100,7 @@ var game = {
         $('#choices').html('<h3 class="remove"> The correct answer was: ' + str + '</h3>');
         this.incorrect++;
         this.asked++;
-        setTimeout(game.nextQuestion, 1000 * 5);
+        setTimeout(game.nextQuestion, 1000 * 1);
     },
     populateBoard: function () {
         $('#question').empty();
