@@ -4,6 +4,7 @@ var game = {
     incorrect: 0,
     asked:0,
     timeLeft:-1,
+    difficulty: "easy",
     start: function () {
         this.populateArrays();
 
@@ -27,10 +28,9 @@ var game = {
         this.correct_answer = "";
         this.choices = [];
         $.ajax({
-            url: "https://opentdb.com/api.php?amount=1&category=23&difficulty=medium&type=multiple",
+            url: "https://opentdb.com/api.php?amount=1&category=23&difficulty="+ this.difficulty +"&type=multiple",
             method: "GET"
         }).then(function (response) {
-            console.log(response);
             var question = response.results[0].question;
             game.question = question;
             game.correct_answer = response.results[0].correct_answer;
@@ -49,7 +49,6 @@ var game = {
         $('#question').empty();
         $('#question').removeAttr('data-answer');
         $('.multiChoice').remove();
-        console.log('correct');
         $('#question').html('<h1 class="correct"> CORRECT!!!! </h1>');
         setTimeout(game.nextQuestion, 1000 * 1);
         this.correct++;
@@ -57,7 +56,6 @@ var game = {
         this.timeLeft = -1;
     },
     wrongAnswer: function (str) {
-        console.log(str);
         $('#question').empty();
         $('#question').removeAttr('data-answer');
         $('.multiChoice').remove();
@@ -90,7 +88,6 @@ var game = {
         }
     },
     outOFtime: function (str) {
-        console.log('Timeout');
         $('#question').empty();
         $('#timer').empty();
         $('#question').removeAttr('data-answer');
@@ -151,7 +148,6 @@ $('#choices').on('click', '.multiChoice', function () {
         game.correctAnswer();
     }
     else {
-        console.log('wrong')
         game.wrongAnswer($('#question').attr('data-answer'));
     }
 });
